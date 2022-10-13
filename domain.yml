@@ -1,0 +1,176 @@
+version: "3.0"
+session_config:
+  session_expiration_time: 0
+  carry_over_slots_to_new_session: true
+intents:
+- check_human
+- active_grade:
+    use_entities: []
+- grade_dev
+- grade_qa
+- grade_devops
+- grade_support
+- inform
+- active_id
+- list_resource
+- greet
+- goodbye
+- affirm
+- deny
+- thankyou
+- out_of_scope
+- help
+- nlu_fallback
+- session_start
+- restart
+- trigger_handoff
+- handoff
+- human_handoff
+
+
+entities:
+- grade
+- project_id
+- id
+- number
+- handoff_to
+- time
+
+ 
+slots:
+  grade:
+    type: any
+    influence_conversation: false
+    mappings:
+    - intent: grade_dev
+      type: from_intent
+      value: Developer
+      conditions:
+      - active_loop: know_grade_form
+        requested_slot: grade
+    - intent: grade_qa
+      type: from_intent
+      value: Quality
+      conditions:
+      - active_loop: know_grade_form
+        requested_slot: grade
+    - intent: grade_devops
+      type: from_intent
+      value: DevOps
+      conditions:
+      - active_loop: know_grade_form
+        requested_slot: grade
+    - intent: grade_support
+      type: from_intent
+      value: IT Support
+      conditions:
+      - active_loop: know_grade_form
+        requested_slot: grade
+    - intent:
+      - inform
+      - know_grade_form
+      type: from_text
+      conditions:
+      - active_loop: know_grade_form
+        requested_slot: grade
+
+  project_id:
+    type: any
+    influence_conversation: False
+    mappings:
+    - type: from_entity
+      entity: number
+  id:
+    type: any
+    influence_conversation: False
+    mappings:
+    - type: from_entity
+      entity: number
+
+
+  handoff_to:
+    type: any
+    influence_conversation: false
+    mappings:
+    - type: from_entity
+      entity: handoff_to
+
+  requested_slot:
+    type: any
+    influence_conversation: false
+    mappings:
+    - type: custom
+ 
+responses:
+  utter_out_of_scope:
+  - text: Sorry, I'm not sure how to respond to that. Type "help" for assistance.
+  utter_project_id:
+  - text: Ok, Can you give me the Id of your project ? 
+  utter_id:
+  - text: Ok, Can you give me the Id of your project ? 
+  utter_unknown_project_id:
+  - text: Sorry, This projectId {project_id} dosen't exist.
+  utter_unknown_grade:
+  - text: Sorry, I dont' have any idea about this profil.
+  utter_ok:
+  - text: 👍  
+  utter_default:
+  - text: I didn't quite understand that. Could you rephrase?
+  utter_ask_handoff:
+  - text: It looks like you want to be transferred to a Manager Assistant or comptroller agent .
+  utter_handoff:
+  - text: Alright, I'll try to transfer you.
+  utter_wouldve_handed_off:
+  - text: If you were talking to me via chatroom, I would have handed you off to {handoffhost}.
+  utter_no_handoff:
+  - text: Since you haven't configured a host to hand off to, I can't send you anywhere!
+  utter_ask_whatelse:
+  - text: What else can I help you with? Type "help" for assistance 😀
+  utter_help:
+  - buttons:
+    - payload: /active_id
+      title: Active employees in a specific project
+    - payload: /active_grade
+      title: Active employees  with grade
+    - payload: /list_resource
+      title: List resources in your project
+    text: "Would You like to know :"
+  utter_greet:
+  - text: Hi! I'm a HR Assistant!
+  utter_noworries:
+  - text: You're welcome :)
+  utter_goodbye:
+  - text: Bye
+  utter_ask_rephrase:
+  - text: I didn't quite understand that. Can you rephrase?
+  utter_ask_continue:
+  - text: Would you like to continue?
+  utter_bot:
+  - text: I'm a virtual assistant made with Rasa.
+  utter_ask_know_grade_form_grade:
+  - buttons:
+    - payload: /grade_dev
+      title: Developer
+    - payload: /grade_qa
+      title: Quality
+    - payload: /grade_devops
+      title: DevOps
+    - payload: /grade_support
+      title: IT Support
+    text: "Which grade do you want to khow her active employees?"
+ 
+actions :
+  - action_session_start
+  - action_restart
+  - action_handoff
+  - action_handoff_options
+  - validate_know_grade_form
+  - action_List_activeId
+  - action_List_resources
+  - action_grade_employee
+
+forms:
+  know_grade_form:
+    ignored_intents: []
+    required_slots:
+    - grade

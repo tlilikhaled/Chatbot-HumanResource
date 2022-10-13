@@ -1,0 +1,10 @@
+handoff_hosts:
+    managment_assistant:
+      title: "Managment Assistant"
+      url: "http://localhost:3001/webChat"
+    ## you can add more handoff hosts to this list e.g.
+    HR_assistant:
+      title: "Manager Assistant"
+      url: "http://localhost:4200"
+    
+
